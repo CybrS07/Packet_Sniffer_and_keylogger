@@ -1,0 +1,6 @@
+{
+    "python.defaultInterpreterPath": "/home/cybes07/.pyenv/versions/3.10.14/bin/python",
+    "code-runner.executorMap": {
+        "python": "sudo /home/cybes07/.pyenv/versions/3.10.14/bin/python -u"
+    }
+}
